@@ -3,12 +3,12 @@ import functools
 from collections import defaultdict, OrderedDict
 
 distribution_percent = 0.82 # 100 - 18% fee
-endpoint = "http://localhost:9922"
+endpoint = 'http://localhost:9922'
 strattime = 1575964672001715000 # nanosecond timestamp
 endtime = 1576741985294000000  # nanosecond timestamp
 
-SUPERNODE_ADDRESS = "AU69hVSi1dgiVt8so8UiJbDA8xaHgZf5uqq"
-REWARDS_ADDRESS = "AU4uSzCqHnq831RiK5HuYPTFYW2R27wbPAL"
+SUPERNODE_ADDRESS = 'AU69hVSi1dgiVt8so8UiJbDA8xaHgZf5uqq'
+REWARDS_ADDRESS = 'AU4uSzCqHnq831RiK5HuYPTFYW2R27wbPAL'
 
 TRANSACTION_TYPE = {
     1: 'Genesis',
@@ -56,7 +56,7 @@ def all_transactions_for_address(address):
     return ascending_transactions
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     supernode_transactions = all_transactions_for_address(SUPERNODE_ADDRESS)
     print(f'SuperNode address {SUPERNODE_ADDRESS} has {len(supernode_transactions)} txs.')
 
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     for transaction in payment_transactions:
         print(transaction)
 
-    print(f"Rewards address {REWARDS_ADDRESS} has {len(all_transactions_for_address(REWARDS_ADDRESS))} txs.")
+    print(f'Rewards address {REWARDS_ADDRESS} has {len(all_transactions_for_address(REWARDS_ADDRESS))} txs.')
     # Interested in the minting transaction and payments.
     # TODO... keep going.
 
