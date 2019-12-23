@@ -10,6 +10,19 @@ endtime = 1576741985294000000  # nanosecond timestamp
 SUPERNODE_ADDRESS = "AU69hVSi1dgiVt8so8UiJbDA8xaHgZf5uqq"
 REWARDS_ADDRESS = "AU4uSzCqHnq831RiK5HuYPTFYW2R27wbPAL"
 
+TRANSACTION_TYPE = {
+    1: 'Genesis',
+    2: 'Payment',
+    3: 'Lease',
+    4: 'LeaseCancel',
+    5: 'MintingTransaction',
+    6: 'ContendSlotsTransaction',
+    7: 'ReleaseSlotsTransaction',
+    8: 'RegisterContractTransaction',
+    9: 'ExecuteContractFunctionTransaction',
+    10: 'DbPutTransaction',
+}
+
 
 def all_supernode_addresses():
     '''Returns the addresses in the supernode's wallet.'''
@@ -19,7 +32,7 @@ def all_supernode_addresses():
 def all_transactions_for_address(address):
     '''Returns all of the transactions associated with an address in increasing
     block height order.'''
-    descending_trnasactions = OrderedDict()
+    descending_transactions = OrderedDict()
     offset = 0
     LIMIT = 10000
     while True:
@@ -44,9 +57,23 @@ def all_transactions_for_address(address):
 
 
 if __name__ == "__main__":
-    print(f"SuperNode address {SUPERNODE_ADDRESS} has {len(all_transactions_for_address(SUPERNODE_ADDRESS))} txs.")
-    print(f"Rewards address {REWARDS_ADDRESS} has {len(all_transactions_for_address(REWARDS_ADDRESS))} txs.")
+    supernode_transactions = all_transactions_for_address(SUPERNODE_ADDRESS)
+    print(f'SuperNode address {SUPERNODE_ADDRESS} has {len(supernode_transactions)} txs.')
 
+    lease_transactions = filter(lambda tx: tx['type'] in {3, 4}, supernode_transactions)
+    payment_transactions = filter(lambda tx: tx['type'] == 2, supernode_transactions)
+
+    print(f'SuperNode lease transactions:')
+    for transaction in lease_transactions:
+        print(transaction)
+
+    print(f'SuperNode payment transactions:')
+    for transaction in payment_transactions:
+        print(transaction)
+
+    print(f"Rewards address {REWARDS_ADDRESS} has {len(all_transactions_for_address(REWARDS_ADDRESS))} txs.")
+    # Interested in the minting transaction and payments.
+    # TODO... keep going.
 
 # def rewards(startts, endts):
 #     total = (endts-startts)/1e9/60*3600000000*distribution_percent
