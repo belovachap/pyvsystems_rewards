@@ -65,7 +65,7 @@ def create_address_pages(addresses, html_output_directory, height):
             f.write(f'<p>Total Operation Fee: <span class="monospace">{format_as_vsys(address.total_operation_fee)}</span></p>')
             f.write(f'<p>Total Interest: <span class="monospace">{format_as_vsys(address.total_interest)}</span></p>')
             f.write(f'<p>Total Pool Distribution: <span class="monospace">{format_as_vsys(address.total_pool_distribution)}</span></p>')
-            f.write(f'<p>Interest Owed: <span class="monospace">{format_as_vsys(address.interest_owed)}</span></p>')
+            f.write(f'<p>Interest Owed: <span class="monospace">{format_as_vsys(address.total_interest_owed())}</span></p>')
 
             f.write(f'<h2>Active Leases</h2>')
             f.write('<table>')
@@ -83,7 +83,6 @@ def create_address_pages(addresses, html_output_directory, height):
             for lease in address.active_leases(height):
                 f.write('''
                         <tr>
-                            <td>{}</td>
                             <td class="monospace">{}</td>
                             <td class="monospace">{}</td>
                             <td class="monospace">{}</td>
@@ -118,7 +117,6 @@ def create_address_pages(addresses, html_output_directory, height):
             for lease in address.inactive_leases(height):
                 f.write('''
                         <tr>
-                            <td>{}</td>
                             <td class="monospace">{}</td>
                             <td class="monospace">{}</td>
                             <td class="monospace">{}</td>
@@ -150,7 +148,7 @@ def create_address_pages(addresses, html_output_directory, height):
                     </tr>
                 '''
             )
-            for pool_distribution in address.pool_distributions:
+            for pool_distribution in address.pool_distributions():
                 f.write(
                     '''
                         <tr>
@@ -180,7 +178,7 @@ def create_index_page(addresses, html_output_directory, height):
         total_interest += address.total_interest
         total_operation_fee += address.total_operation_fee
         total_pool_distribution += address.total_pool_distribution
-        total_interest_owed += address.interest_owed
+        total_interest_owed += address.total_interest_owed()
 
     with open(f'{html_output_directory}/index.html', 'w') as f:
         f.write('<html>')
@@ -243,9 +241,9 @@ def create_index_page(addresses, html_output_directory, height):
                 '''.format(
                     f'<a href="{address.address}.html">{address.address}</a>',
                     format_as_vsys(address.total_interest),
-                    format_as_vsys(adress.total_operation_fee),
+                    format_as_vsys(address.total_operation_fee),
                     format_as_vsys(address.total_pool_distribution),
-                    format_as_vsys(address.total_interest_owed),
+                    format_as_vsys(address.total_interest_owed()),
                 )
             )
 

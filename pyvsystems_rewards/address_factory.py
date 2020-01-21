@@ -1,12 +1,14 @@
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict
 
 import requests
 
 from .address import Address
+from .lease import Lease
+from .minting_reward import MintingReward
+from .pool_distribution import PoolDistribution
 
 
 class AddressFactory:
-    MAB_MATURES_AFTER_BLOCKS = 86400
     TRANSACTION_CODE = {
         'Genesis': 1,
         'Payment': 2,
@@ -27,21 +29,41 @@ class AddressFactory:
         cold_wallet_address,
         operation_fee_percent
     ):
-        self.api_url = api_url
-        self.hot_wallet_address = hot_wallet_address
-        self.cold_wallet_address = cold_wallet_address
-        self.operation_fee_percent = operation_fee_percent
+        self._api_url = api_url
+        self._hot_wallet_address = hot_wallet_address
+        self._cold_wallet_address = cold_wallet_address
+        self._operation_fee_percent = operation_fee_percent
         self._addresses = None
 
     def get_addresses(self):
         if self._addresses is not None:
-            return self._addresses
+            return self._addresses.values()
 
-        self._addresses = []
+        self._addresses = {}
+        hot_wallet_transactions = self._get_transactions(self._hot_wallet_address)
+        cold_wallet_transactions = self._get_transactions(self._cold_wallet_address)
+        self._add_leases(hot_wallet_transactions)
+        self._add_minting_rewards(cold_wallet_transactions)
+        self._add_pool_distributions(cold_wallet_transactions)
 
-        return self._addresses
+        return self._addresses.values()
 
-    def get_transactions(self, address):
+    def get_active_addresses(self, height):
+        addresses = self.get_addresses()
+        return [address for address in addresses if address.is_active(height)]
+
+    def get_inactive_addresses(self, height):
+        addresses = self.get_addresses()
+        return [address for address in addresses if not address.is_active(height)]
+
+    def get_active_leases(self, height):
+        active_leases = []
+        for address in self.get_addresses():
+            active_leases.extend(address.active_leases(height))
+
+        return active_leases
+
+    def _get_transactions(self, address):
         '''Returns all of the transactions associated with an address in
         increasing block height order.'''
         descending_transactions = OrderedDict()
@@ -49,7 +71,7 @@ class AddressFactory:
         LIMIT = 10000
         while True:
             transactions = requests.get(
-                self.api_url + '/transactions/list',
+                self._api_url + '/transactions/list',
                 params={'address': address, 'limit': LIMIT, 'offset': offset}
             ).json();
 
@@ -67,61 +89,53 @@ class AddressFactory:
 
         return ascending_transactions
 
-
-    def get_address_to_leases(self, hot_wallet_transactions):
-        address_to_leases = defaultdict(list)
+    def _add_leases(self, hot_wallet_transactions):
         for tx in hot_wallet_transactions:
-            if tx['type'] == TRANSACTION_CODE['Lease']:
+            if tx['type'] == self.TRANSACTION_CODE['Lease']:
                 address = tx['proofs'][0]['address']
-                address_to_leases[address].append(
-                    Lease(tx['id'], address, tx['amount'], tx['height'])
-                )
-            elif tx['type'] == TRANSACTION_CODE['LeaseCancel']:
-                address = tx['proofs'][0]['address']
-                for lease in address_to_leases[address]:
-                    if lease.lease_id == tx['leaseId']:
-                        lease.stop_height = tx['height']
-                        break
+                if address not in self._addresses:
+                    self._addresses[address] = Address(address)
 
-        return address_to_leases
-
-
-    def get_minting_rewards(
-        cold_wallet_transactions,
-        address_to_leases,
-        operation_fee_percent
-    ):
-        minting_rewards = []
-        for tx in cold_wallet_transactions:
-            if tx['type'] == TRANSACTION_CODE['MintingTransaction']:
-                minting_rewards.append(
-                    MintingReward(
-                        tx['id'],
-                        tx['amount'],
-                        tx['height'],
-                        address_to_leases,
-                        operation_fee_percent
-                    )
+                address = self._addresses[address]
+                address.start_lease(
+                    Lease(tx['id'], address.address, tx['amount'], tx['height'])
                 )
 
-        return minting_rewards
+            elif tx['type'] == self.TRANSACTION_CODE['LeaseCancel']:
+                address = tx['proofs'][0]['address']
+                address = self._addresses[address]
+                address.stop_lease(tx['leaseId'], tx['height'])
 
-
-    def get_address_to_pool_distributions(
-        cold_wallet_transactions,
-        address_to_leases,
-        cold_wallet_address
-    ):
-        address_to_pool_distributions = defaultdict(list)
-        lease_addresses = address_to_leases.keys()
+    def _add_minting_rewards(self, cold_wallet_transactions):
         for tx in cold_wallet_transactions:
-            if (tx['type'] == TRANSACTION_CODE['Payment'] and
-                    tx['proofs'][0]['address'] == cold_wallet_address):
+            if tx['type'] == self.TRANSACTION_CODE['MintingTransaction']:
+                active_addresses = self.get_active_leases(tx['height'])
+                minting_reward = MintingReward(
+                    tx['id'],
+                    tx['amount'],
+                    tx['height'],
+                    active_addresses,
+                    self._operation_fee_percent
+                )
+
+                for address in active_addresses:
+                    address.add_minting_reward(minting_reward)
+
+    def _add_pool_distributions(self, cold_wallet_transactions):
+        for tx in cold_wallet_transactions:
+            if (tx['type'] == self.TRANSACTION_CODE['Payment'] and
+                    tx['proofs'][0]['address'] == self._cold_wallet_address):
                 address = tx['recipient']
-                if address not in lease_addresses:
+                if address not in self._addresses:
                     continue
 
-                pool_distribution = PoolDistribution(tx['id'], tx['amount'], tx['fee'], tx['height'])
-                address_to_pool_distributions[address].append(pool_distribution)
-
-        return address_to_pool_distributions
+                address = self._addresses[address]
+                address.add_pool_distribution(
+                    PoolDistribution(
+                        tx['id'],
+                        address.address,
+                        tx['amount'],
+                        tx['fee'],
+                        tx['height']
+                    )
+                )
