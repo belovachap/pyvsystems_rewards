@@ -109,16 +109,15 @@ class AddressFactory:
     def _add_minting_rewards(self, cold_wallet_transactions):
         for tx in cold_wallet_transactions:
             if tx['type'] == self.TRANSACTION_CODE['MintingTransaction']:
-                active_addresses = self.get_active_leases(tx['height'])
                 minting_reward = MintingReward(
                     tx['id'],
                     tx['amount'],
                     tx['height'],
-                    active_addresses,
+                    self.get_active_leases(tx['height']),
                     self._operation_fee_percent
                 )
 
-                for address in active_addresses:
+                for address in self.get_active_addresses(tx['height']):
                     address.add_minting_reward(minting_reward)
 
     def _add_pool_distributions(self, cold_wallet_transactions):

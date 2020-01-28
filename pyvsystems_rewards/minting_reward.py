@@ -27,8 +27,6 @@ class MintingReward:
 
     def operation_fee_for_address(self, address):
         operation_fee = 0.0
-        import pdb; pdb.set_trace()
-
         for lease in self._lease_to_operation_fee:
             if lease.address == address.address:
                 operation_fee += self.operation_fee_for_lease(lease)
