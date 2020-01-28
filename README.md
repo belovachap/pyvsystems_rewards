@@ -1,4 +1,4 @@
-# pyvsysrewards
+# pyvsystems_rewards
 
 A tool for making distributing VSYS rewards easy ;)
 
