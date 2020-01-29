@@ -255,7 +255,7 @@ if __name__ == '__main__':
     api_url = 'http://wallet.v.systems/api'
     hot_wallet_address = 'AR6Gt6GXq7yPnXoFek83sQ6sCekQWbBj7YK'
     cold_wallet_address = 'ARMb6m8PLr45oGAooYzYnxb8cSC112B7KCp'
-    operation_fee_percent=0.18
+    operation_fee_percent=Decimal('0.18')
     html_output_directory = 'html_output'
     height = requests.get(api_url + '/blocks/height').json()['height']
 

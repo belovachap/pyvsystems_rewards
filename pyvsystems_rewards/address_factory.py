@@ -56,13 +56,6 @@ class AddressFactory:
         addresses = self.get_addresses()
         return [address for address in addresses if not address.is_active(height)]
 
-    def get_active_leases(self, height):
-        active_leases = []
-        for address in self.get_addresses():
-            active_leases.extend(address.active_leases(height))
-
-        return active_leases
-
     def _get_transactions(self, address):
         '''Returns all of the transactions associated with an address in
         increasing block height order.'''
@@ -106,6 +99,13 @@ class AddressFactory:
                 address = self._addresses[address]
                 address.stop_lease(tx['leaseId'], tx['height'])
 
+    def _get_active_leases(self, height):
+        active_leases = []
+        for address in self.get_addresses():
+            active_leases.extend(address.active_leases(height))
+
+        return active_leases
+
     def _add_minting_rewards(self, cold_wallet_transactions):
         for tx in cold_wallet_transactions:
             if tx['type'] == self.TRANSACTION_CODE['MintingTransaction']:
@@ -113,7 +113,7 @@ class AddressFactory:
                     tx['id'],
                     tx['amount'],
                     tx['height'],
-                    self.get_active_leases(tx['height']),
+                    self._get_active_leases(tx['height']),
                     self._operation_fee_percent
                 )
 

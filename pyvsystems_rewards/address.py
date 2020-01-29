@@ -3,9 +3,9 @@ class Address:
         self.address = address
         self._leases = {}
         self._pool_distributions = {}
-        self.total_interest = 0.0
-        self.total_operation_fee = 0.0
-        self.total_pool_distribution = 0.0
+        self.total_interest = 0
+        self.total_operation_fee = 0
+        self.total_pool_distribution = 0
 
     def leases(self):
         return self._leases.values()
