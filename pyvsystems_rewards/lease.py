@@ -23,7 +23,7 @@ class Lease:
 
         mab_modifier = Decimal(height - self.start_height) / Decimal(self.MAB_MATURES_AFTER_BLOCKS)
         mab_modifier = min(1, mab_modifier)
-        return mab_modifier * self.amount
+        return int(mab_modifier * self.amount)
 
     def add_minting_reward(self, minting_reward):
         self.total_interest += minting_reward.interest_for_lease(self)
