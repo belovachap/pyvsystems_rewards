@@ -29,11 +29,16 @@ class AddressFactory:
         cold_wallet_address,
         operation_fee_percent
     ):
+        self.total_interest = 0
+        self.total_operation_fee = 0
+        self.total_pool_distribution = 0
         self._api_url = api_url
         self._hot_wallet_address = hot_wallet_address
         self._cold_wallet_address = cold_wallet_address
         self._operation_fee_percent = operation_fee_percent
         self._addresses = None
+
+        self.get_addresses()
 
     def get_addresses(self):
         if self._addresses is not None:
@@ -116,6 +121,8 @@ class AddressFactory:
                     self._get_active_leases(tx['height']),
                     self._operation_fee_percent
                 )
+                self.total_interest += minting_reward.interest
+                self.total_operation_fee += minting_reward.operation_fee
 
                 for address in self.get_active_addresses(tx['height']):
                     address.add_minting_reward(minting_reward)
@@ -128,13 +135,12 @@ class AddressFactory:
                 if address not in self._addresses:
                     continue
 
-                address = self._addresses[address]
-                address.add_pool_distribution(
-                    PoolDistribution(
-                        tx['id'],
-                        address.address,
-                        tx['amount'],
-                        tx['fee'],
-                        tx['height']
-                    )
+                pool_distribution = PoolDistribution(
+                    tx['id'],
+                    address,
+                    tx['amount'],
+                    tx['fee'],
+                    tx['height']
                 )
+                self.total_pool_distribution += pool_distribution.amount + pool_distribution.fee
+                self._addresses[address].add_pool_distribution(pool_distribution)
