@@ -15,16 +15,9 @@ def test_closed_lease_is_active():
     assert lease.is_active(20) == False
     assert lease.is_active(21) == False
 
-    # def get_mab(self, height):
-    #     if not self.is_active(height):
-    #         return None
-
-    #     mab_modifier = (height - self.start_height) / float(self.MAB_MATURES_AFTER_BLOCKS)
-    #     mab_modifier = min(1.0, mab_modifier)
-    #     return mab_modifier * self.amount
-
 def test_get_mab():
     lease = Lease('lease_id', 'address', 100000000, 10, 10 + Lease.MAB_MATURES_AFTER_BLOCKS + 10)
 
-    # need to write this
-    assert False
+    assert lease.get_mab(10 + Lease.MAB_MATURES_AFTER_BLOCKS) == 100000000
+    assert lease.get_mab(10 + Lease.MAB_MATURES_AFTER_BLOCKS + 1) == 100000000
+    assert lease.get_mab(10 + Lease.MAB_MATURES_AFTER_BLOCKS + 10) is None

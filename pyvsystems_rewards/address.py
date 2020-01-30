@@ -4,7 +4,6 @@ class Address:
         self._leases = {}
         self._pool_distributions = {}
         self.total_interest = 0
-        self.total_operation_fee = 0
         self.total_pool_distribution = 0
 
     def leases(self):
@@ -28,7 +27,6 @@ class Address:
 
     def add_minting_reward(self, minting_reward):
         self.total_interest += minting_reward.interest_for_address(self)
-        self.total_operation_fee += minting_reward.operation_fee_for_address(self)
         for lease in self.active_leases(minting_reward.height):
             lease.add_minting_reward(minting_reward)
 

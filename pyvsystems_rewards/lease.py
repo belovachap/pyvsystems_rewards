@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 class Lease:
     MAB_MATURES_AFTER_BLOCKS = 86400
 
@@ -7,8 +9,7 @@ class Lease:
         self.amount = amount
         self.start_height = start_height
         self.stop_height = stop_height
-        self.total_interest = 0.0
-        self.total_operation_fee = 0.0
+        self.total_interest = 0
 
     def is_active(self, height):
         if height < self.start_height:
@@ -20,13 +21,12 @@ class Lease:
         if not self.is_active(height):
             return None
 
-        mab_modifier = (height - self.start_height) / float(self.MAB_MATURES_AFTER_BLOCKS)
-        mab_modifier = min(1.0, mab_modifier)
+        mab_modifier = Decimal(height - self.start_height) / Decimal(self.MAB_MATURES_AFTER_BLOCKS)
+        mab_modifier = min(1, mab_modifier)
         return mab_modifier * self.amount
 
     def add_minting_reward(self, minting_reward):
         self.total_interest += minting_reward.interest_for_lease(self)
-        self.total_operation_fee += minting_reward.operation_fee_for_lease(self)
 
     # The following functions are required to use the Lease as a key in
     # dictionaries.

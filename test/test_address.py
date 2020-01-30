@@ -19,9 +19,5 @@ def test_add_minting_reward():
     address.start_lease(lease_two)
 
     assert address.total_interest == 0
-    assert address.total_operation_fee == 0
-
     address.add_minting_reward(minting_reward)
-
-    assert address.total_interest == 1586008378.9280853
-    assert address.total_operation_fee == 348148180.74031144
+    assert address.total_interest == 97012713 + 1445873390
