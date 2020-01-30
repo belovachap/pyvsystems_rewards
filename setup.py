@@ -4,14 +4,14 @@ with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name='pyvsysrewards',
+    name='pyvsystems_rewards',
     version='0.0.1',
     author='Chapman Shoop',
     author_email='chapman.shoop@gmail.com',
     description='A library for calculating VSystem Supernode Rewards',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/belovachap/pyvsysrewards',
+    url='https://github.com/belovachap/pyvsystems_rewards',
     packages=setuptools.find_packages(),
     classifiers=[
         'Programming Language :: Python :: 3',
