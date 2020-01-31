@@ -1,8 +1,5 @@
 # pyvsystems_rewards
 
-A tool for making distributing VSYS rewards easy ;)
+A python tool for distributing VSYS supernode rewards easy ;)
 
-## TODO
-
-The rest of this :D
-
+## How to use
