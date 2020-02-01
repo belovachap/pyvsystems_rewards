@@ -15,8 +15,9 @@ used sooner:
 1. `git clone https://github.com/belovachap/pyvsystems_rewards.git`
 2. `cd pyvsystems_rewards`
 3. `virtualenv -p python3 venv`
-4. `pip install -r requirements.txt`
-5. `pip install -r requirements-dev.txt`
+4. `source venv/bin/activate`
+5. `pip install -r requirements.txt`
+6. `pip install -r requirements-dev.txt`
 
 In `reports.py` update the following settings to reflect your Supernode's
 attributes:
