@@ -30,7 +30,7 @@ def format_as_vsys(amount):
     return f'{whole}.{str(fraction).ljust(8, "0")}'
 
 
-def create_address_pages(addresses, html_output_directory, height):
+def create_address_pages(addresses, html_output_directory, height, supernode_name):
     for address in addresses:
         with open(f'{html_output_directory}/{address.address}.html', "w") as f:
             f.write("<html>")
@@ -58,8 +58,7 @@ def create_address_pages(addresses, html_output_directory, height):
                 </style>
             ''')
             f.write("<body>")
-            f.write("<p><em>THIS IS DEVELOPMENT LEVEL SOFTWARE FOR DEVELOPERS ONLY!</em></p>")
-            f.write(f'<h1>Peercoin VPool Rewards</h1>')
+            f.write(f'<h1>{supernode_name} Rewards</h1>')
             f.write(f'<h2>Address <span class="monospace">{address.address}</span></h2>')
             f.write(f'<p>Page Updated: <span class="monospace">{UTC_NOW}</span></p>')
             f.write(f'<p>Current Block Height: <span class="monospace">{height}</span></p>')
@@ -163,7 +162,7 @@ def create_address_pages(addresses, html_output_directory, height):
             f.write('</body></html>')
 
 
-def create_index_page(factory, html_output_directory, height):
+def create_index_page(factory, html_output_directory, height, supernode_name):
     with open(f'{html_output_directory}/index.html', 'w') as f:
         f.write('<html>')
         f.write(
@@ -192,8 +191,7 @@ def create_index_page(factory, html_output_directory, height):
             '''
         )
         f.write('<body>')
-        f.write('<p><em>THIS IS DEVELOPMENT LEVEL SOFTWARE FOR DEVELOPERS ONLY!</em></p>')
-        f.write(f'<h1>Peercoin VPool Rewards</h1>')
+        f.write(f'<h1>{supernode_name} Rewards</h1>')
         f.write(f'<p>Page Updated: <span class="monospace">{UTC_NOW}</span></p>')
         f.write(f'<p>Current Block Height: <span class="monospace">{height}</span></p>')
         f.write(f'<p>Total Interest: <span class="monospace">{format_as_vsys(factory.total_interest)}</span></p>')
@@ -234,6 +232,7 @@ def create_index_page(factory, html_output_directory, height):
 
 if __name__ == '__main__':
     api_url = 'http://wallet.v.systems/api'
+    supernode_name = 'Peercoin VPool'
     hot_wallet_address = 'AR6Gt6GXq7yPnXoFek83sQ6sCekQWbBj7YK'
     cold_wallet_address = 'ARMb6m8PLr45oGAooYzYnxb8cSC112B7KCp'
     operation_fee_percent = Decimal('0.18')
@@ -247,5 +246,5 @@ if __name__ == '__main__':
         operation_fee_percent=operation_fee_percent
     )
     addresses = factory.get_addresses()
-    create_address_pages(addresses, html_output_directory, height)
-    create_index_page(factory, html_output_directory, height)
+    create_address_pages(addresses, html_output_directory, height, supernode_name)
+    create_index_page(factory, html_output_directory, height, supernode_name)
