@@ -8,7 +8,7 @@ setuptools.setup(
     version='0.0.1',
     author='Chapman Shoop',
     author_email='chapman.shoop@gmail.com',
-    description='A library for calculating VSystem Supernode Rewards',
+    description='A library for calculating VSystems Supernode Rewards',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/belovachap/pyvsystems_rewards',
