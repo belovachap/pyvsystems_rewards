@@ -1,7 +1,7 @@
 # pyvsystems_rewards
 
 This library provides the accounting required to operate a successful and
-transparent VSystems Supernode.
+transparent v.systems supernode.
 
 ## Quick Start
 
@@ -27,7 +27,7 @@ To work on the library:
 
 Unit tests can be run with `pytest test`.
 
-## Releasing on PyPi
+## Releasing On PyPi
 
 1. Update the version number in `setup.py`
 2. `make clean`
