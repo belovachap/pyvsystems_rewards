@@ -27,6 +27,13 @@ To work on the library:
 
 Unit tests can be run with `pytest test`.
 
+## Releasing on PyPi
+
+1. Update the version number in `setup.py`
+2. `make clean`
+3. `make`
+4. `make upload`
+
 ## Use Cases
 
 Other initiatives using this library:
