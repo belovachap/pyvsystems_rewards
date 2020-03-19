@@ -3,6 +3,7 @@ class Address:
         self.address = address
         self._leases = {}
         self._pool_distributions = {}
+        self._minting_rewards = {}
         self.total_interest = 0
         self.total_pool_distribution = 0
 
@@ -26,9 +27,13 @@ class Address:
         return bool(self.active_leases(height))
 
     def add_minting_reward(self, minting_reward):
+        self._minting_rewards[minting_reward.minting_reward_id] = minting_reward
         self.total_interest += minting_reward.interest_for_address(self)
         for lease in self.active_leases(minting_reward.height):
             lease.add_minting_reward(minting_reward)
+
+    def minting_rewards(self):
+        return self._minting_rewards.values()
 
     def pool_distributions(self):
         return self._pool_distributions.values()

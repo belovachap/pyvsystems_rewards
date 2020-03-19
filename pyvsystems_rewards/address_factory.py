@@ -116,6 +116,7 @@ class AddressFactory:
             if tx['type'] == self.TRANSACTION_CODE['MintingTransaction']:
                 minting_reward = MintingReward(
                     tx['id'],
+                    tx['timestamp'],
                     tx['amount'],
                     tx['height'],
                     self._get_active_leases(tx['height']),
