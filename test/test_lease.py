@@ -14,12 +14,3 @@ def test_closed_lease_is_active():
     assert lease.is_active(19) == True
     assert lease.is_active(20) == False
     assert lease.is_active(21) == False
-
-def test_get_mab():
-    lease = Lease('lease_id', 'address', 100000000, 10, 10 + Lease.MAB_MATURES_AFTER_BLOCKS + 10)
-
-    assert lease.get_mab(10 - 1) is None
-    assert lease.get_mab(10) == 0
-    assert lease.get_mab(10 + Lease.MAB_MATURES_AFTER_BLOCKS) == 100000000
-    assert lease.get_mab(10 + Lease.MAB_MATURES_AFTER_BLOCKS + 1) == 100000000
-    assert lease.get_mab(10 + Lease.MAB_MATURES_AFTER_BLOCKS + 10) is None

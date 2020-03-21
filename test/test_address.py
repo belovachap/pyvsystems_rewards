@@ -12,7 +12,14 @@ def test_add_minting_reward():
     lease_three = Lease('lease_three_id', 'address_two', 50000000000, 125)
     active_leases = [lease_one, lease_two, lease_three]
 
-    minting_reward = MintingReward('transaction_id', 3600000000, 3000, active_leases, Decimal('0.18'))
+    minting_reward = MintingReward(
+        minting_reward_id='transaction_id',
+        timestamp=1575966231000000000,
+        amount=3600000000,
+        height=3000,
+        active_leases=active_leases,
+        operation_fee_percent=Decimal('0.18')
+    )
 
     address = Address('address_one')
     address.start_lease(lease_one)
@@ -20,4 +27,4 @@ def test_add_minting_reward():
 
     assert address.total_interest == 0
     address.add_minting_reward(minting_reward)
-    assert address.total_interest == 97012713 + 1445873390
+    assert address.total_interest == 94303970 + 1428848015

@@ -20,11 +20,11 @@ class MintingReward:
         self.leases = active_leases
 
         # Stage one of distribution.
-        total_mab = self.get_mab()
+        total_lease_amount =  Decimal(self.get_total_lease_amount())
         self._lease_to_interest = {}
         stage_one_interest = 0
         for lease in self.leases:
-            i = int(self.interest * (Decimal(lease.get_mab(height)) / Decimal(total_mab)))
+            i = int(self.interest * (Decimal(lease.amount) / total_lease_amount))
             stage_one_interest += i
             self._lease_to_interest[lease] = i
 
@@ -39,8 +39,8 @@ class MintingReward:
             self._lease_to_interest[lease] += 1
             remaining_interest -= 1
 
-    def get_mab(self):
-        return sum([lease.get_mab(self.height) for lease in self.leases])
+    def get_total_lease_amount(self):
+        return sum([lease.amount for lease in self.leases])
 
     def interest_for_lease(self, lease):
         return self._lease_to_interest[lease]
