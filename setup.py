@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='pyvsystems_rewards',
-    version='0.0.4',
+    version='0.0.5',
     author='Chapman Shoop',
     author_email='chapman.shoop@gmail.com',
     description='A library for calculating v.systems supernode rewards',
