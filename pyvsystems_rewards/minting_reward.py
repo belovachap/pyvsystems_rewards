@@ -3,13 +3,13 @@ from decimal import Decimal
 
 class MintingReward:
     def __init__(
-        self,
-        minting_reward_id,
-        timestamp,
-        amount,
-        height,
-        active_leases,
-        operation_fee_percent
+            self,
+            minting_reward_id,
+            timestamp,
+            amount,
+            height,
+            active_leases,
+            operation_fee_percent
     ):
         self.minting_reward_id = minting_reward_id
         self.timestamp = timestamp
@@ -20,7 +20,7 @@ class MintingReward:
         self.leases = active_leases
 
         # Stage one of distribution.
-        total_lease_amount =  Decimal(self.get_total_lease_amount())
+        total_lease_amount = Decimal(self.get_total_lease_amount())
         self._lease_to_interest = {}
         stage_one_interest = 0
         for lease in self.leases:

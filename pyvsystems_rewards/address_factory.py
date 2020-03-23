@@ -23,11 +23,11 @@ class AddressFactory:
     }
 
     def __init__(
-        self,
-        api_url,
-        hot_wallet_address,
-        cold_wallet_address,
-        operation_fee_percent
+            self,
+            api_url,
+            hot_wallet_address,
+            cold_wallet_address,
+            operation_fee_percent
     ):
         self.total_interest = 0
         self.total_operation_fee = 0
@@ -66,12 +66,12 @@ class AddressFactory:
         increasing block height order.'''
         descending_transactions = OrderedDict()
         offset = 0
-        LIMIT = 10000
+        limit = 10000
         while True:
             transactions = requests.get(
                 self._api_url + '/transactions/list',
-                params={'address': address, 'limit': LIMIT, 'offset': offset}
-            ).json();
+                params={'address': address, 'limit': limit, 'offset': offset}
+            ).json()
 
             if transactions['size'] == 0:
                 break
@@ -79,7 +79,7 @@ class AddressFactory:
             for transaction in transactions['transactions']:
                 descending_transactions[transaction['id']] = transaction
 
-            offset += LIMIT
+            offset += limit
 
         ascending_transactions = []
         for transaction_id in reversed(descending_transactions):

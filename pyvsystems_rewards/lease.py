@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 class Lease:
 
     def __init__(self, lease_id, address, amount, start_height, stop_height=None):
@@ -28,4 +26,4 @@ class Lease:
         return self.lease_id == other.lease_id
 
     def __ne__(self, other):
-        return not(self == other)
+        return not self == other
